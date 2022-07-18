@@ -239,27 +239,14 @@ class Connection {
             return;
 
         let assets = [];
-        let page = 1;
 
-        while(true){
-            let response = await this.github.rest.repos.listReleaseAssets({
-                ...context.repo,
-                release_id: this.id,
-                per_page: 100,
-                page: page++,
-            });
+        let response = await this.github.paginate(this.github.rest.repos.listReleaseAssets, {
+            ...context.repo,
+            release_id: this.id,
+        });
 
-            let pageOfAssets = response.data;
-            let count = 0;
-
-            for(let asset of pageOfAssets){
-                assets.push(asset);
-                count++;
-            }
-
-            if(count < 100){
-                break;
-            }
+        for(let asset of response){
+             assets.push(asset);
         }
 
         this.dump('assets', assets);
