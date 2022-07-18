@@ -53,6 +53,16 @@ It is meant as a replacement for the `update-release` GitHub action and brings m
 
 ### Changelog:
 
+v1.3.1
+
+Changes include:
+
+- Fixed bug that caused releases with more than 100 assets to not be updated correctly
+
+Thank you to our contributors:
+
+- beyarkay
+
 v1.3.0
 
 Changes include:
@@ -92,7 +102,7 @@ Stale repo [johnwbyrd/update-release](https://github.com/johnwbyrd/update-releas
 Insert the following into the appropriate step in your `.github/workflows/*.yml` file:
 
     - name: Update release
-      uses: IsaacShelton/update-existing-release@v1.3.0
+      uses: IsaacShelton/update-existing-release@v1.3.1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: ./file-to-release.zip dist/other-file-to-release.exe README.md
@@ -104,7 +114,7 @@ Insert the following into the appropriate step in your `.github/workflows/*.yml`
 The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time your build starts.  If your build requires longer than an hour to run, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build:
 
     - name: Update release
-      uses: IsaacShelton/update-existing-release@v1.3.0
+      uses: IsaacShelton/update-existing-release@v1.3.1
       with:
         token: ${{ secrets.YOUR_PRIVATE_SECRET_TOKEN }}
         release: Nightly
