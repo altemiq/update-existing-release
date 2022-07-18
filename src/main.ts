@@ -208,7 +208,7 @@ class Connection {
             }
 
             if (shouldDelete) {
-                core.startGroup('Deleting old release asset id ' + asset.id + '...');
+                core.startGroup('Deleting old release asset ' + asset.name + ' (' + asset.id + ')...');
                 await this.github.rest.repos.deleteReleaseAsset(
                     {
                         ...context.repo,
@@ -238,16 +238,10 @@ class Connection {
         if (this.id < 0)
             return;
 
-        let assets = [];
-
-        let response = await this.github.paginate(this.github.rest.repos.listReleaseAssets, {
+        let assets = await this.github.paginate(this.github.rest.repos.listReleaseAssets, {
             ...context.repo,
             release_id: this.id,
         });
-
-        for(let asset of response){
-             assets.push(asset);
-        }
 
         this.dump('assets', assets);
         core.endGroup();
