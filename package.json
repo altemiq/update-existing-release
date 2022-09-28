@@ -2,7 +2,6 @@
   "name": "update-existing-release",
   "version": "1.3.1",
   "description": "A smarter way to make fresh build assets continuously available and edit releases, with Github actions",
-  "private": true,
   "main": "./dist/main.js",
   "scripts": {
     "bundle": "webpack --mode production",

@@ -1,120 +1,64 @@
 # update-existing-release
 
-Create, update, and edit existing releases plus upload assets!
+Create, update, and edit existing releases!
 
-An action to create a release or update it if it exists and publish assets into it. This ensures the release and tag are updated so that the release date is updated.
+Great for creating a `latest` or `nightly` release.
 
-This is typically aimed at updating a `latest` or `nightly` release, possibly from different workflows. This allows the release to always be available (never deleted) while always being up-to-date (the tag is updated to so the date shown by GitHub corresponds to the latest asset uploaded).
-
-*Drawbacks of this Method*:
-
- - Assets must be manually deleted if you stop building them. 
-
- - Assets can be desynchronized when using multiple workflows if some are
-   failing while others succeed.
-
-*Overview:*
-
-- [update-existing-release](#update-existing-release)
-  - [Quick start](#quick-start)
-    - [For builds lasting more than an hour](#for-builds-lasting-more-than-an-hour)
-  - [Summary](#summary)
-  - [Guide](#guide)
-  - [Inputs](#inputs)
-    - [token](#token)
-    - [files](#files)
-    - [release](#release)
-    - [tag](#tag)
-    - [message](#message)
-    - [body](#body)
-    - [prerelease](#prerelease)
-    - [draft](#draft)
-    - [replace](#replace)
-    - [updateTag](#updateTag)
-  - [Outputs](#outputs)
-    - [files](#files-1)
-    - [draft](#draft-1)
-    - [prerelease](#prerelease-1)
-    - [release](#release-1)
-    - [tag](#tag-1)
-  - [Internals](#internals)
-    - [security concerns](#security-concerns)
-  - [Problems?](#problems)
+```yaml
+- uses: IsaacShelton/update-existing-release@v1.3.1
+  with:
+    token: ${{secrets.GITHUB_TOKEN}}
+    release: "Nightly"
+    tag: "nightly"
+    replace: true
+    files: >
+      stage/MacOS-arm64-Installer-nightly.pkg
+      stage/Windows-x86_64-Installer-nightly.exe
+      stage/Ubuntu-x86_64-Standalone-nightly.zip
+```
 
 
+### Fork History
 
-## History
+This action is the successor to the `update-release` GitHub action. It has been updated to work with the latest GitHub APIs and also includes bugs fixes and additional features.
 
-`update-existing-release` is a fork of [ColinPitrat/update-release](https://github.com/ColinPitrat/update-release) which itself is a fork of [johnwbyrd/update-release](https://github.com/johnwbyrd/update-release).
-
-It is meant as a replacement for the `update-release` GitHub action and brings much needed updates, bug fixes, and improvements.
-
+[`IsaacShelton/update-existing-release`](https://github.com/IsaacShelton/update-existing-release) <- [`ColinPitrat/update-release`](https://github.com/ColinPitrat/update-release) <- [`johnwbyrd/update-release`](https://github.com/johnwbyrd/update-release)
 
 
-### Changelog:
+### Inputs
+This action has the following inputs:
 
-v1.3.1
+| Input        | Description                                                             |
+| ------------ | ----------------------------------------------------------------------- |
+| `token` **(required)**     | This should be [your secure Github token](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token). Use `${{ secrets.GITHUB_TOKEN }}` if your build lasts less than an hour. Otherwise, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build. |
+| `files` **(required)**      | The files that you want for your the release. Presumably, this should include at least one file that you just built. File paths can be provided as absolute paths, or they can be relative to `${{ github.workspace }}`. |
+| `release`       | The name of the release to be created. If none is supplied, a reasonable looking one will be chosen based on `${{ github.ref }}`. |
+| `tag`       | The name of the tag to be created. For some inexplicable reason, Github thinks that you need to have a tag corresponding to every release, which makes no sense if you're using Github to do continuous integration builds.  The tag will be the same as the calculated name of the release, if this input is not supplied.  |
+| `message`       | A brief description of the tag and also of the release.  |
+| `body`       | A longer description of the release, if it is created.  |
+| `prerelease`       | Whether to mark the release, if created, as a prerelease. Such releases are generally publicly visible. This is `false` by default. |
+| `draft`       | Whether to mark the release, if created, as a draft. Such releases are generally not publicly visible. This is `false` by default. |
+| `replace ` (since v1.1.0)       | Whether to remove existing files of the release that are not overwritten. This will cause all existing files attached to the release to be removed and replaced with the files provided. This is `false` by default. |
+| `updateTag ` (since v1.2.0)       | Whether to update the tag to the latest commit. If the tag doesn't already exist, it will be created pointing to the latest commit regardless of this option. This is `true` by default. |
 
-Changes include:
+### Outputs
 
-- Fixed bug that caused releases with more than 100 assets to not be updated correctly
+If successful, this action will have the following outputs:
 
-Thank you to our contributors:
-
-- beyarkay
-
-v1.3.0
-
-Changes include:
-
-- Validation of tag name choice
-- Fixed issue with first time creating a release
-
-
-v1.2.0
-
-Changes include:
-
-- Added `updateTag` option to automatically update the tag to the latest commit
-
-v1.1.0
-
-Changes include:
-
-- Updated all dependencies to latest versions
-- Code now works with latest version of GitHub API
-- Added `replace` option, to allow for removing attached files that aren't overwritten
-- Now works correctly when the release doesn't exist already (it will be added before updating)
-- Cleaned up a little of the code, although it still isn't the cleanest
-
-v1.0.1
-
-Stale repo [ColinPitrat/update-release](https://github.com/ColinPitrat/update-release) 
-
-v1.0.0
-
-Stale repo [johnwbyrd/update-release](https://github.com/johnwbyrd/update-release) 
-
-
-
-## Quick start
-
-Insert the following into the appropriate step in your `.github/workflows/*.yml` file:
-
-    - name: Update release
-      uses: IsaacShelton/update-existing-release@v1.3.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./file-to-release.zip dist/other-file-to-release.exe README.md
-
+| Output       | Description                                                             |
+| ------------ | ----------------------------------------------------------------------- |
+| `files`      | The calculated local paths of the files to be uploaded into the release |
+| `draft`      | Whether the release, if created, was marked as a draft                  |
+| `prerelease` | Whether the release, if created, was marked as a prerelease             |
+| `release`    | The name of the release                                                 |
+| `tag`        | The tag used to create the release                                      |
 
 
 ### For builds lasting more than an hour
 
 The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time your build starts.  If your build requires longer than an hour to run, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build:
 
-    - name: Update release
-      uses: IsaacShelton/update-existing-release@v1.3.1
+    - uses: IsaacShelton/update-existing-release@v1.3.1
       with:
         token: ${{ secrets.YOUR_PRIVATE_SECRET_TOKEN }}
         release: Nightly
@@ -126,137 +70,56 @@ The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time you
 
 
 
-## Summary
+### Overall Security Precautions
 
-[This Github action](https://www.github.com/IsaacShelton/update-existing-release) allows you, to publish files created by your GitHub Actions as assets in new or existing releases. As it does so, it updates the release so that the tag and date match the last released asset.
+- Review the source code all Github actions you use (including this one)
+- Verify that they don't store, transmit, or otherwise mistreat your secure Github token
+- With your secure access token comes the permission to control to your repository
 
-Note: if you publish assets to the same release from different workflows, it is up to you to ensure that all the assets are updated and actually match the tag.
+*For extra peace of mind, feel free to review and then rebuild this action using `npm run bundle` to make sure that the minified `dist/main.js` corresponds exactly to the one in the repo.*
 
-Because this action is written in [TypeScript](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)  and executes in [node.js](https://nodejs.org/en/), it runs on *all* Github's supported build runner platforms. These include Windows, MacOS, and Ubuntu.
+*This action also has the additional security feature of helpfully marking the token that you provide it as a secret so that it doesn't inadvertently sneak into any log files.*
 
+### Changelog
 
+**`v1.3.1`**
 
-## Guide
+- Fixed bug that caused releases with more than 100 assets to not be updated correctly
+- Thank you to our contributors:
+	- beyarkay
 
-Once your build has successfully completed, update-existing-release will choose a release name for your build.  Regardless of whether the ref that triggered the build is a tag or a branch, you'll get a human-friendly release name.  You can of course override the default choice. If the Github release name already exists, it is reused; otherwise, it is created.
+**`v1.3.0`**
 
+- Validation of tag name choice
+- Fixed issue with first time creating a release
 
 
-## Inputs
+**`v1.2.0`**
 
-The following parameters are accepted as inputs to the update-existing-release action.
+- Added `updateTag` option to automatically update the tag to the latest commit
 
-### token
+**`v1.1.0`**
 
-This should be [your secure Github token](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token). Use `${{ secrets.GITHUB_TOKEN }}` as the parameter if your build lasts less than an hour.
+- Updated all dependencies to latest versions
+- Code now works with latest version of GitHub API
+- Added `replace` option, to allow for removing attached files that aren't overwritten
+- Now works correctly when the release doesn't exist already (it will be added before updating)
+- Cleaned up a little of the code, although it still isn't the cleanest
 
-If your build lasts more than an hour, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build.
+**`v1.0.1`**
 
-This parameter is **required**.
+- Stale repo [ColinPitrat/update-release](https://github.com/ColinPitrat/update-release) 
 
-### files
+**`v1.0.0`**
 
-The paths to files that you wish to add to the release. Presumably, this should include at least one file that you just built. File paths can be provided as absolute paths, or they can alternately be relative to `${{ github.workspace }}`.  
+- Stale repo [johnwbyrd/update-release](https://github.com/johnwbyrd/update-release) 
 
-This parameter is **required**.
 
-### release
+### Building it yourself
 
-The name of the release to be created.
+**Setup:**
 
-A reasonable-looking release name will be created from the current `${{ github.ref }}` if this input is not supplied. This reasonable looking default is created by taking `${{ github.ref }}`, removing the prefixes `refs/`, `heads/`, and `tags/` , and then replacing any remaining forward-slash symbols `/` with dashes `-`.
-
-If you don't like this behavior, you can override the release name.
-
-This parameter is **optional**.
-
-### tag
-
-The name of the tag to be created. For some inexplicable reason, Github thinks that you need to have a tag corresponding to every release, which makes no sense if you're using Github to do continuous integration builds.  The tag will be the same as the calculated name of the release, if this input is not supplied. 
-
-This parameter is **optional**.
-
-### message
-
-A brief description of the tag and also of the release.
-
-This parameter is **optional**.
-
-### body
-
-A longer description of the release, if it is created.
-
-This parameter is **optional**.
-
-### prerelease
-
-Should the release, if created, be marked as a prerelease?
-
-Such releases are generally publicly visible.
-
-This parameter is **optional**. The default setting is `false`.
-
-### draft
-
-Should the release, if created, be marked as a draft? 
-
-Such releases are generally not publicly visible.
-
-This parameter is **optional**. The default setting is `false`.
-
-### replace (since v1.1.0)
-
-Should existing files for the release be removed if not overwritten?
-
-This will cause all existing files attached to the release to be removed and replaced with the files provided.
-
-This parameter is **optional**. The default setting is `false`.
-
-### updateTag (since v1.2.0)
-
-Should the tag be updated to point to the latest commit?
-
-If set, the provided tag will be modified.
-
-If the tag doesn't already exist (regardless of `updateTag`), it will be created pointing to the latest commit.
-
-This parameter is **optional**. The default setting is `true`.    
-
-
-
-## Outputs
-
-If assets are successfully published, you will get the following outputs from the step, which you can use in later processing.
-
-The following parameters are provided as outputs to this Github action.
-
-### files
-
-The calculated local paths of the files to be uploaded into the release.
-
-### draft
-
-Whether the release, if created, was marked as a draft.
-
-### prerelease
-
-Whether the release, if created, was marked as a prerelease.
-
-### release
-
-The name of the release.
-
-### tag
-
-The tag used to create the release.
-
-
-
-## Internals
-
-### Setup
-
-To build under Debian (should be easy to adapt):
+To build under Debian (can be adopted for other platforms):
 
 ```
 apt-get install webpack npm
@@ -264,35 +127,41 @@ npm install --save-dev typescript ts-loader v8-compile-cache
 npm run bundle
 ```
 
-### Details
+**Details:**
 
-This Github action was written for [node.js](https://nodejs.org/en/) in [TypeScript](https://github.com/IsaacShelton/update-existing-release), and it uses [webpack](https://webpack.js.org/) in order to run [ESLint](https://eslint.org/) before bundling. Use [npm install](https://docs.npmjs.com/cli/install) to install all package.json dependencies of update-existing-release, before hacking on it.
+This action uses `Node.js`, `TypeScript`, `webpack`, and `ESLint`.
 
-Several [npm](https://www.npmjs.com/) targets were added to speed along development.  The `test` run target builds readable `dist/main.js` and `dist/main.map.js` files, for source-level debugging of the TypeScript.  A `test-watch` run target watches the `src/main.ts` file for changes, and lints and recompiles it as needed.  And, a `bundle` run target prepares a production minified `dist/main.js`.
+Use `npm install` to install all `package.json` dependencies of `update-existing-release` before hacking on it.
 
-This action uses the `dotenv` import in order to facilitate debugging.  This import reads a `.env` file, if it exists, as the root of the installation, and uses it to populate environmental variables for local testing of update-existing-release. A typical `.env` file for developing update-existing-release, might look something like this:
+Several npm run targets were added for ease of development:
+
+- `test` builds readable `dist/main.js` and `dist/main.map.js` files for source-level debugging
+- `test-watch` watches `src/main.ts` for changes and lints/recompiles as needed
+- `bundle`  prepares a production ready `dist/main.js`
+
+**Debugging:**
+
+This action uses `.env` files in order to help facilitate debugging.  It will read a `.env` file, if it exists, as the root of the installation, and uses it to populate the environment variables for local testing. A typical `.env` file for testing this action might look something like this:
 
     INPUT_ASSET=your-build-asset.zip
     INPUT_TOKEN=00000000000000000000000000000001
-    GITHUB_REPOSITORY=you/your-repo
+    GITHUB_REPOSITORY=your-username/your-repo
     GITHUB_REF=refs/heads/master
     GITHUB_WORKSPACE=/absolute/local/path/to/workspace
 
-Using an `.env` file, you can perform local testing and debugging of update-existing-release without having to build a product first.
+Using an `.env` file can allow you to perform local testing and debugging without having to build a product first.
 
-### Security concerns
 
-You *should* review the source code of this -- and *all other!* -- Github actions, to verify that they don't store, transmit, or otherwise mistreat your secure Github token.
+### Contributions
 
-When you provide your secure access token to any Github action, you're essentially giving the code in that action permission to do whatever it wants to your repository.  *Don't* just hand over your security tokens to any Github actions, for which the sources are not available!
+All pull requests are welcome and will be reviewed promptly.
 
-For extra peace of mind, please review `src/main.ts` *in detail*; also, feel free to rebuild it using `npm run bundle`, to make sure that the minified `dist/main.js` corresponds exactly to the one in the repo.
 
-As an extra protection, `src/main.ts` tries to helpfully mark the token that you provide it as a secret, so that it doesn't inadvertently sneak into any log files.
+### Thank you
 
-## Problems?
+Contributors will have there names listed below:
 
-I welcome all patches and improvements as pull requests against [my repository](https://github.com/IsaacShelton/update-existing-release).
-
-I will get back to your pull requests!
-
+- johnwbyrd
+- ColinPitrat
+- IsaacShelton
+- beyarkay
