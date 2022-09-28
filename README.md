@@ -58,16 +58,17 @@ If successful, this action will have the following outputs:
 
 The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time your build starts.  If your build requires longer than an hour to run, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build:
 
-    - uses: IsaacShelton/update-existing-release@v1.3.1
-      with:
-        token: ${{ secrets.YOUR_PRIVATE_SECRET_TOKEN }}
-        release: Nightly
-        replace: true
-        files: >
-          stage/x86_64-Windows-HelloWorld.exe
-          stage/arm64-MacOS-HelloWorld
-          stage/x86_64-Ubuntu-HelloWorld
-
+```yaml
+- uses: IsaacShelton/update-existing-release@v1.3.1
+  with:
+    token: ${{ secrets.YOUR_PRIVATE_SECRET_TOKEN }}
+    release: Nightly
+    replace: true
+    files: >
+      stage/x86_64-Windows-HelloWorld.exe
+      stage/arm64-MacOS-HelloWorld
+      stage/x86_64-Ubuntu-HelloWorld
+```
 
 
 ### Overall Security Precautions
@@ -121,7 +122,7 @@ The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time you
 
 To build under Debian (can be adopted for other platforms):
 
-```
+```console
 apt-get install webpack npm
 npm install --save-dev typescript ts-loader v8-compile-cache
 npm run bundle
@@ -143,11 +144,13 @@ Several npm run targets were added for ease of development:
 
 This action uses `.env` files in order to help facilitate debugging.  It will read a `.env` file, if it exists, as the root of the installation, and uses it to populate the environment variables for local testing. A typical `.env` file for testing this action might look something like this:
 
-    INPUT_ASSET=your-build-asset.zip
-    INPUT_TOKEN=00000000000000000000000000000001
-    GITHUB_REPOSITORY=your-username/your-repo
-    GITHUB_REF=refs/heads/master
-    GITHUB_WORKSPACE=/absolute/local/path/to/workspace
+```ini
+INPUT_ASSET=your-build-asset.zip
+INPUT_TOKEN=00000000000000000000000000000001
+GITHUB_REPOSITORY=your-username/your-repo
+GITHUB_REF=refs/heads/master
+GITHUB_WORKSPACE=/absolute/local/path/to/workspace
+```
 
 Using an `.env` file can allow you to perform local testing and debugging without having to build a product first.
 
