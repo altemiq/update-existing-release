@@ -38,8 +38,8 @@ This action has the following inputs:
 | `body`       | A longer description of the release, if it is created.  |
 | `prerelease`       | Whether to mark the release, if created, as a prerelease. Such releases are generally publicly visible. This is `false` by default. |
 | `draft`       | Whether to mark the release, if created, as a draft. Such releases are generally not publicly visible. This is `false` by default. |
-| `replace ` (since v1.1.0)       | Whether to remove existing files of the release that are not overwritten. This will cause all existing files attached to the release to be removed and replaced with the files provided. This is `false` by default. |
-| `updateTag ` (since v1.2.0)       | Whether to update the tag to the latest commit. If the tag doesn't already exist, it will be created pointing to the latest commit regardless of this option. This is `true` by default. |
+| `replace` (since v1.1.0)       | Whether to remove existing files of the release that are not overwritten. This will cause all existing files attached to the release to be removed and replaced with the files provided. This is `false` by default. |
+| `updateTag` (since v1.2.0)       | Whether to update the tag to the latest commit. If the tag doesn't already exist, it will be created pointing to the latest commit regardless of this option. This is `true` by default. |
 
 ### Outputs
 
