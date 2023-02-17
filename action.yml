@@ -1,7 +1,7 @@
-name: 'update-existing-release'
-description: 'Update existing releases on GitHub and edit/replace their files'
+name: 'Update Existing Release'
+description: 'Create, update, and edit existing releases! Great for creating a `latest` or `nightly` release.'
 author: 'Isaac Shelton'
-inputs: 
+inputs:
   token:
     description: 'Your Github token; try \$\{\{ secrets.GITHUB_TOKEN \}\} if your build lasts less than an hour, or create your own secret token with repository access if your build requires longer than an hour.'
     required: true

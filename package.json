@@ -10,13 +10,14 @@
     "test-compile": "tsc -p ./"
   },
   "keywords": [
-    "github",
-    "octokit",
+    "update",
+    "existing",
     "release",
+    "github",
+    "action",
     "ci",
     "build",
-    "actions",
-    "action"
+    "actions"
   ],
   "author": "Isaac Shelton",
   "license": "ISC",
