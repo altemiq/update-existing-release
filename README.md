@@ -168,3 +168,4 @@ Contributors will have there names listed below:
 - ColinPitrat
 - IsaacShelton
 - beyarkay
+- patriziobruno
