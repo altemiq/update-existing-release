@@ -5,7 +5,7 @@ Create, update, and edit existing releases!
 Great for creating a `latest` or `nightly` release.
 
 ```yaml
-- uses: IsaacShelton/update-existing-release@v1.3.2
+- uses: IsaacShelton/update-existing-release@v1.3.3
   with:
     token: ${{secrets.GITHUB_TOKEN}}
     release: "Nightly"
@@ -59,7 +59,7 @@ If successful, this action will have the following outputs:
 The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time your build starts.  If your build requires longer than an hour to run, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build:
 
 ```yaml
-- uses: IsaacShelton/update-existing-release@v1.3.2
+- uses: IsaacShelton/update-existing-release@v1.3.3
   with:
     token: ${{ secrets.YOUR_PRIVATE_SECRET_TOKEN }}
     release: Nightly
@@ -82,6 +82,10 @@ The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time you
 *This action also has the additional security feature of helpfully marking the token that you provide it as a secret so that it doesn't inadvertently sneak into any log files.*
 
 ### Changelog
+
+**`v1.3.3`**
+
+- Updated octokit dependencies
 
 **`v1.3.2`**
 
