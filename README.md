@@ -5,7 +5,7 @@ Create, update, and edit existing releases!
 Great for creating a `latest` or `nightly` release.
 
 ```yaml
-- uses: IsaacShelton/update-existing-release@v1.3.5
+- uses: altemiq/update-existing-release@v1.3.5
   with:
     token: ${{secrets.GITHUB_TOKEN}}
     release: "Nightly"
@@ -22,7 +22,7 @@ Great for creating a `latest` or `nightly` release.
 
 This action is the successor to the `update-release` GitHub action. It has been updated to work with the latest GitHub APIs and also includes bugs fixes and additional features.
 
-[`IsaacShelton/update-existing-release`](https://github.com/IsaacShelton/update-existing-release) <- [`ColinPitrat/update-release`](https://github.com/ColinPitrat/update-release) <- [`johnwbyrd/update-release`](https://github.com/johnwbyrd/update-release)
+[`altemiq/update-existing-release`](https://github.com/altemiq/update-existing-release) <- [`IsaacShelton/update-existing-release`](https://github.com/IsaacShelton/update-existing-release) <- [`ColinPitrat/update-release`](https://github.com/ColinPitrat/update-release) <- [`johnwbyrd/update-release`](https://github.com/johnwbyrd/update-release)
 
 
 ### Inputs
@@ -31,7 +31,7 @@ This action has the following inputs:
 | Input        | Description                                                             |
 | ------------ | ----------------------------------------------------------------------- |
 | `token` **(required)**     | This should be [your secure Github token](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token). Use `${{ secrets.GITHUB_TOKEN }}` if your build lasts less than an hour. Otherwise, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build. |
-| `files` **(required)**      | The files that you want for your the release. Presumably, this should include at least one file that you just built. File paths can be provided as absolute paths, or they can be relative to `${{ github.workspace }}`. |
+| `files`      | The files that you want for your the release. Presumably, this should include at least one file that you just built. File paths can be provided as absolute paths, or they can be relative to `${{ github.workspace }}`. |
 | `release`       | The name of the release to be created. If none is supplied, a reasonable looking one will be chosen based on `${{ github.ref }}`. |
 | `tag`       | The name of the tag to be created. For some inexplicable reason, Github thinks that you need to have a tag corresponding to every release, which makes no sense if you're using Github to do continuous integration builds.  The tag will be the same as the calculated name of the release, if this input is not supplied.  |
 | `message`       | A brief description of the tag and also of the release.  |
@@ -59,7 +59,7 @@ If successful, this action will have the following outputs:
 The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time your build starts.  If your build requires longer than an hour to run, you will need to [create your own access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) with repo admin access, [store it as a secret](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) in your own repository, and reference that secret token in your build:
 
 ```yaml
-- uses: IsaacShelton/update-existing-release@v1.3.5
+- uses: altemiq/update-existing-release@v1.3.5
   with:
     token: ${{ secrets.YOUR_PRIVATE_SECRET_TOKEN }}
     release: Nightly
@@ -86,6 +86,8 @@ The `${{ secrets.GITHUB_TOKEN }}` is valid for exactly an hour from the time you
 **`v1.3.5`**
 
 - Updated dependencies
+- Updated to node20
+- Remove requirements for files to be required
 
 **`v1.3.4`**
 

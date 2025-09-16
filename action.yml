@@ -7,7 +7,6 @@ inputs:
     required: true
   files:
     description: 'Paths to built files to be released. May be absolute or relative to \$\{\{ github.workspace \}\}.'
-    required: true
   release:
     description: 'The name of the release to be created. A reasonable looking release name will be created from the current \$\{\{ github.ref \}\} if this input is not supplied.'
     required: false

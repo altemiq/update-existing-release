@@ -369,23 +369,25 @@ class Connection {
     }
 
     protected setFiles() {
-        let inputFileString: string = core.getInput('files', { required: true });
-        let inputFiles: Array<string> = inputFileString.split(/[ ,\r\n\t]+/);
-        for (let oneFile of inputFiles) {
-            let tryPath: string = oneFile;
-            if (!existsSync(tryPath) || !isAbsolute(tryPath)) {
-                // go on a path hunt
-                tryPath = resolve(process.env.GITHUB_WORKSPACE, oneFile);
-                if (!existsSync(tryPath)) {
-                    throw new Error(`could not find ${oneFile} as either absolute path or path relative to workspace`);
+        let inputFileString: string = core.getInput('files');
+        if (inputFileString && inputFileString.length > 0) {
+            let inputFiles: Array<string> = inputFileString.split(/[ ,\r\n\t]+/);
+            for (let oneFile of inputFiles) {
+                let tryPath: string = oneFile;
+                if (!existsSync(tryPath) || !isAbsolute(tryPath)) {
+                    // go on a path hunt
+                    tryPath = resolve(process.env.GITHUB_WORKSPACE, oneFile);
+                    if (!existsSync(tryPath)) {
+                        throw new Error(`could not find ${oneFile} as either absolute path or path relative to workspace`);
+                    }
                 }
+                if (!existsSync(tryPath)) {
+                    throw new Error(`could not find file ${tryPath} for release; please provide a full path or path relative to workspace`);
+                }
+                // Although Windows uses backslashes as separators, Windows can also use forward slashes as separators
+                // and this choice is more compatible with cross-platform scripts
+                this.files.push(tryPath.replace(/\\/g, '/'));
             }
-            if (!existsSync(tryPath)) {
-                throw new Error(`could not find file ${tryPath} for release; please provide a full path or path relative to workspace`);
-            }
-            // Although Windows uses backslashes as separators, Windows can also use forward slashes as separators
-            // and this choice is more compatible with cross-platform scripts
-            this.files.push(tryPath.replace(/\\/g, '/'));
         }
         core.setOutput('files', JSON.stringify(this.files));
     }
@@ -435,6 +437,10 @@ class Connection {
     }
 
     protected async uploadAssets() {
+        if (this.files.length == 0) {
+            return;
+        }
+        
         // if we can't figure out what file type you have, we'll assign it this unknown type
         // https://www.iana.org/assignments/media-types/application/octet-stream
         const defaultAssetContentType = 'application/octet-stream';
