@@ -4,7 +4,8 @@ author: 'Isaac Shelton'
 inputs:
   token:
     description: 'Your Github token; try \$\{\{ secrets.GITHUB_TOKEN \}\} if your build lasts less than an hour, or create your own secret token with repository access if your build requires longer than an hour.'
-    required: true
+    required: false
+    default: ${{ github.token }}
   files:
     description: 'Paths to built files to be released. May be absolute or relative to \$\{\{ github.workspace \}\}.'
   release:
